@@ -1,23 +1,38 @@
-class Player
-  def initialize
-  end
+require './human_interaction'
+require './computer_interaction'
 
-  def get_guess
-    guess = gets.chomp.split("")
-    
-    if validate(guess)
-      guess
+class Player
+  include HumanInteraction, ComputerInteraction
+  attr_reader :name
+
+  def initialize(human=true)
+    @human = human
+
+    if @human
+      @name = "You"
     else
-      puts "The guess must be a 4 digit number."
-      get_guess
+      @name = "The computer"
     end
   end
 
-  private
+  def get_guess
+    if @human
+      get_code_from_terminal
+    else
+      generate_guess
+    end
+  end
 
-  def validate(guess)
-    guess.length == 4 &&
-      guess.uniq.length == 4 &&
-      guess.all? { |i| "0123456789".include?(i) }
+  def generate_guess
+    print "Guessing... "
+    sleep(1)
+
+    guess = generate_code
+    puts guess.join("")
+    guess
+  end
+
+  def human?
+    @human
   end
 end

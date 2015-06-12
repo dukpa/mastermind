@@ -2,33 +2,35 @@ require './code'
 require './player'
 
 class Game
-  def self.start
-    Game.new
+  def self.start(human_player=true)
+    Game.new(human_player)
   end
 
   private
 
-  def initialize
-    @code = Code.random
-    @player = Player.new
+  def initialize(human_player=true)
+    if human_player
+      @code = Code.new(:random)
+    else
+      puts "Enter a 4 digit code for the computer to guess"
+      @code = Code.new(:human)
+    end
+    
+
+    @player = Player.new(human_player)
     @turns = 0
 
     start
   end
 
   def start
-    puts "Guess the 4 digit code."
-    puts "Each number is only used once."
-    puts "* indicates the correct number int he correct place."
-    puts "_ indicates the correct number in the wrong place."
-
     take_turn
   end
 
   def take_turn
     @turns += 1
 
-    puts "Take a guess..."
+    puts "Take a guess..." if @player.human?
     guess = @player.get_guess
     feedback = @code.get_feedback(guess)
     puts "Feedback: #{feedback.join(" ")}"
@@ -46,10 +48,10 @@ class Game
 
   def end_game(feedback)
     if feedback.join("") == "****"
-      puts "You guess correctly!"
+      puts "#{@player.name} guessed correctly!"
     else
-      puts "You did not guess correctly."
-      puts "The code was #{@code}"
+      puts "#{@player.name} did not guess correctly."
+      puts "The code was #{@code}" if @player.human?
     end
   end
 end

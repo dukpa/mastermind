@@ -1,6 +1,17 @@
+require './human_interaction'
+require './computer_interaction'
+
 class Code
-  def self.random
-    Code.new(:random)
+  include HumanInteraction, ComputerInteraction
+
+  def initialize(option)
+    @secret_code = []
+
+    if option == :random
+      @secret_code = generate_code
+    elsif option == :human
+      @secret_code = get_code_from_terminal
+    end
   end
 
   def get_feedback(guess)
@@ -19,18 +30,5 @@ class Code
 
   def to_s
     @secret_code.join("")
-  end
-
-  private
-
-  def initialize(option)
-    @secret_code = []
-
-    if option == :random
-      while @secret_code.length < 4
-        @secret_code = (1..4).map { |i| (rand * 10).to_i.to_s }
-        @secret_code.uniq!
-      end
-    end
   end
 end
